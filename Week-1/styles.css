@@ -219,6 +219,7 @@ footer a {
 .ep-list h3 a {
   color: white;
 }
+/* For phones */
 @media (max-width: 768px) {
   .menu-btn {
     display: block;
