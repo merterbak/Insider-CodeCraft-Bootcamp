@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>To do List</h1>
+            <form class="task-form">
+                <input type="text" class="title-input" placeholder="Task Title" required>
+                    <textarea class="description-input" placeholder="Task Description (Optional)"></textarea>
+                        <div class="priority-group">
+                            <label>Priority:</label>
+                            <input type="radio" class="priority-input low-prio" name="priority" value="low" id="low">
+                            <label class="priority-label" for="low">Low</label>
+                            <input type="radio" class="priority-input medium-prio" name="priority" value="medium" id="medium">
+                            <label class="priority-label" for="medium">Medium</label>
+                            <input type="radio" class="priority-input high-prio" name="priority" value="high" id="high">
+                            <label class="priority-label" for="high">High</label>
+                        </div>
+                    <div class="error-message"></div>
+                <button type="submit">Add Task</button>
+            </form>
+            <div class="controls">
+                <button class="toggle-completed">Show Only Completed</button>
+                <button class="sort-priority">Sort by Priority (Low to High)</button>
+            </div>
+        <ul class="task-list"></ul>
+    </div>
+
+    
+    <script src="script.js"></script>
+
+</body>
+</html>
