@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 70%;
+            margin: 20px 0;
+        }
+        form {
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        input, button {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            cursor: pointer;
+        }
+        .highlighted {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Students</h1>
+
+    <table id="Table">
+        
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Class</th>
+                <th>Age</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+
+        <tbody></tbody>
+    </table>
+
+    <h2>Register New Student</h2>
+        <form id="registerStudentForm">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" required>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" required>
+            <label for="class">Class:</label>
+            <input type="text" id="class" required>
+            <label for="age">Age:</label>
+            <input type="number" id="age" required>
+            <button type="submit">Register</button>
+        </form>
+
+    <script>
+
+        var students= [
+            { name: "Lionel", surname: "Messi", grade: "10A", age: 14 },
+            { name: "Cristiano", surname: "Ronaldo", grade: "10B", age: 15 },
+            { name: "Neymar", surname: "Jr.", grade: "10C", age: 16 },
+            { name: "Kylian", surname: "Mbappe", grade: "12A", age: 17 }
+        ];
+        
+        function redrawTable() {
+            var tableContent = $("#Table tbody");
+            tableContent.empty();
+            students.forEach(function(student, position) {
+                var row = $("<tr>").attr("data-position", position);
+                row.append($("<td>").text(position + 1));
+                row.append($("<td>").text(student.name));
+                row.append($("<td>").text(student.surname));
+                row.append($("<td>").text(student.grade));
+                row.append($("<td>").text(student.age));
+                var removeBtn = $("<button>").text("Remove").addClass("remove-btn");
+                row.append($("<td>").append(removeBtn));
+                tableContent.append(row);
+            });
+        }
+        $(document).ready(function() {
+            redrawTable();
+            $("#registerStudentForm").on("submit", function(event) {
+                event.preventDefault();
+                var firstName = $("#firstName").val();
+                var lastName = $("#lastName").val();
+                var studentClass = $("#class").val();
+                var studentAge = $("#age").val();
+                if (firstName && lastName && studentClass && studentAge) {
+                    students.push({ 
+                        name: firstName, 
+                        surname: lastName, 
+                        grade: studentClass, 
+                        age: studentAge 
+                    });
+                    redrawTable();
+                    $("#firstName").val("");
+                    $("#lastName").val("");
+                    $("#class").val("");
+                    $("#age").val("");
+                }
+            });
+            $("#Table").on("click", ".remove-btn", function() {
+                if (confirm("Do you want to remove this student?")) {
+                    var position = $(this).closest("tr").data("position");
+                    students.splice(position, 1);
+                    redrawTable();
+                }
+            });
+            $("#Table tbody").on("click", "tr", function() {
+                $(this).toggleClass("highlighted");
+            });
+        });
+    </script>
+</body>
+</html>
