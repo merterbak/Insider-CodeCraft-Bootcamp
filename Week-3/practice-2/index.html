@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Profile Cards & Animated Interface</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5/dist/fancybox/fancybox.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5/dist/fancybox/fancybox.umd.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: linear-gradient(45deg, skyblue, hotpink, darkmagenta);
+      background-size: 200% 200%;
+      animation: gradientShift 10s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    #fetchUsersBtn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 12px 20px;
+      background: linear-gradient(90deg, hotpink, darkmagenta);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    #fetchUsersBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+    }
+
+    #fetchUsersBtn.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @keyframes customShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .shake-anim {
+      animation: customShake 0.5s ease;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .rotate-anim {
+      animation: rotate 0.5s linear;
+    }
+
+    #profilesContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+
+    .profile-card {
+      width: 220px;
+      height: 300px;
+      border: 1px solid lightgray;
+      border-radius: 6px;
+      background-color: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 15px;
+      display: none;
+      position: relative;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .profile-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .profile-card:hover .profile-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .profile-card-front, .profile-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .profile-card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(45deg, hotpink, darkmagenta);
+      color: white;
+      padding: 10px;
+    }
+
+    .profile-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .profile-card h2 {
+      margin: 8px 0 5px;
+      font-size: 16px;
+      color: darkslategray;
+    }
+
+    .profile-card p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: gray;
+    }
+
+    .profile-card-back h2, .profile-card-back p {
+      color: white;
+    }
+
+    .slider-container {
+      width: 80%;
+      margin: 0 auto;
+      margin-bottom: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .slick-slide {
+      outline: none;
+      text-align: center;
+    }
+
+    .slick-slide img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      color: white;
+      display: none;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    .fancybox__content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      color: #333;
+    }
+
+    .fancybox__content img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 15px;
+      display: block;
+    }
+
+    .fancybox__content h2 {
+      color: darkslategray;
+      font-size: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .fancybox__content p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .fancybox__content strong {
+      color: darkmagenta;
+    }
+  </style>
+</head>
+<body>
+  <h1>Random Profile Cards & Animated Interface</h1>
+  <button id="fetchUsersBtn">Fetch Users</button>
+  <div id="loading" class="loading">Loading...</div>
+  <div id="profilesContainer"></div>
+
+  <h2>Slick Slider Example</h2>
+  <div class="slider-container">
+    <div id="profileSlider" class="slider"></div>
+  </div>
+
+  <script>
+    $(document).ready(() => {
+      Fancybox.bind('[data-fancybox="gallery"]', {
+        content: (fancybox, slide) => {
+          const userData = slide.$trigger.dataset;
+          const caption = userData.caption.split('\n').filter(line => line.trim() !== '');
+          const imageUrl = userData.src;
+
+          return `
+            <div class="fancybox-custom-content">
+              <img src="${imageUrl}" alt="Profile Picture">
+              <h2>${caption[0].replace('<strong>', '').replace('</strong>', '')}</h2>
+              <p><strong>Email:</strong> ${caption[1].replace('Email: ', '')}</p>
+              <p><strong>Phone:</strong> ${caption[2].replace('Phone: ', '')}</p>
+              <p><strong>Country:</strong> ${caption[3].replace('Country: ', '')}</p>
+              <p><strong>City:</strong> ${caption[4].replace('City: ', '')}</p>
+              <p><strong>Age:</strong> ${caption[5].replace('Age: ', '')}</p>
+            </div>
+          `;
+        },
+        on: {
+          init: () => console.log("Fancybox initialized"),
+          error: (fancybox, slide, error) => {
+            console.error("Fancybox error:", error);
+          }
+        }
+      });
+      const $fetchBtn = $("#fetchUsersBtn");
+      const $profilesContainer = $("#profilesContainer");
+      const $profileSlider = $("#profileSlider");
+      const $loading = $("#loading");
+      const checkImageUrl = (url) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = url;
+        });
+      };
+      const fetchUsers = async () => {
+        if ($fetchBtn.hasClass("disabled")) return;
+        $fetchBtn.addClass("disabled");
+
+        $fetchBtn.addClass("shake-anim");
+        setTimeout(() => $fetchBtn.removeClass("shake-anim"), 500);
+
+        $loading.fadeIn(200);
+        $profilesContainer.empty();
+        if ($profileSlider.hasClass("slick-initialized")) {
+          $profileSlider.slick("unslick");
+        }
+        $profileSlider.empty();
+
+        try {
+          const response = await $.ajax({
+            url: "https://randomuser.me/api/?results=4",
+            dataType: "json",
+            timeout: 5000,
+          });
+
+          const users = response.results;
+
+          for (const [index, user] of users.entries()) {
+            console.log("Image URL for", user.name.first, ":", user.picture.large);
+
+            const isImageValid = await checkImageUrl(user.picture.large);
+            const imageUrl = isImageValid ? user.picture.large : "https://via.placeholder.com/100?text=No+Image";
+
+            const cardHtml = `
+              <div class="profile-card" 
+                   data-fancybox="gallery" 
+                   data-src="${imageUrl}" 
+                   data-caption="<strong>${user.name.title} ${user.name.first} ${user.name.last}</strong>
+
+                                 Email: ${user.email}
+
+                                 Phone: ${user.phone}
+
+                                 Country: ${user.location.country}
+
+                                 City: ${user.location.city}
+
+                                 Age: ${user.dob.age}">
+                <div class="profile-card-inner">
+                  <div class="profile-card-front">
+                    <img src="${imageUrl}" alt="${user.name.first}">
+                    <h2>${user.name.title} ${user.name.first} ${user.name.last}</h2>
+                    <p>Email: ${user.email}</p>
+                  </div>
+                  <div class="profile-card-back">
+                    <h2>${user.name.first} ${user.name.last}</h2>
+                    <p>Phone: ${user.phone}</p>
+                    <p>Country: ${user.location.country}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            const sliderItem = `
+              <div>
+                <img src="${imageUrl}" alt="${user.name.first}">
+                <p>${user.name.first}</p>
+              </div>
+            `;
+
+            $profilesContainer.append(cardHtml);
+            $profileSlider.append(sliderItem);
+
+            $profilesContainer
+              .children()
+              .eq(index)
+              .css({ opacity: 0, transform: "translateY(20px)" })
+              .show()
+              .animate(
+                { opacity: 1, translateY: 0 },
+                {
+                  duration: 600 + index * 200,
+                  easing: "swing",
+                  complete: () => $(this).css("transform", ""),
+                }
+              );
+          }
+          $profileSlider.slick({
+            dots: true,
+            arrows: true,
+            infinite: true,
+            speed: 500,
+            slidesToShow: 3,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 3000,
+            responsive: [
+              { breakpoint: 1024, settings: { slidesToShow: 2 } },
+              { breakpoint: 600, settings: { slidesToShow: 1 } },
+            ],
+          });
+        } catch (error) {
+          console.error("AJAX Error:", error);
+          $profilesContainer.html(
+            '<p style="text-align: center; color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);">An error occurred while loading users.</p>'
+          );
+        } finally {
+          $loading.fadeOut(200);
+          $fetchBtn.removeClass("disabled");
+        }
+      };
+
+      fetchUsers();
+
+      $fetchBtn.on("click", fetchUsers);
+    });
+  </script>
+</body>
+</html>
