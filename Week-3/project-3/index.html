@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Catalog</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Catalog</h1>
+            <input type="text" id="search-box" placeholder="Search products..." class="search-bar">
+            <div class="cart-toggle">
+                <button id="cart-button" class="button cart-button">Cart</button>
+                <div id="cart" class="cart-container" style="display: none;">
+                    <h2>Cart</h2>
+                    <div class="cart-items"></div>
+                    <div class="cart-total">
+                        <strong>Total:</strong> $<span id="cart-total">0.00</span>
+                    </div>
+                    <button id="clear-cart" class="button">Clear Cart</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="product-list">
+                <div class="loader" id="loading-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+                <div id="error-message" class="error-message" style="display: none;">
+                    <p>Products could not be loaded.</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="featured-products">
+            <h2>Featured Products</h2>
+            <div id="product-carousel" class="carousel">
+                <div class="carousel-container"></div>
+                <button class="carousel-control prev"><</button>
+                <button class="carousel-control next">></button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <template id="product-template">
+        <div class="product-card">
+            <img src="" alt="Product Image" class="product-image">
+            <h3 class="product-title"></h3>
+            <p class="product-price"></p>
+            <div class="button-group">
+                <button class="button add-to-cart-button">Add to Cart</button>
+                <button class="button show-details">Show Details</button>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
