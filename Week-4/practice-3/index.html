@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Örneği - Alışveriş Sepeti</title>
+    <style>
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item span {
+            flex: 1;
+        }
+        #error {
+            color: red;
+        }
+        #message {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Alışveriş Sepeti</h1>
+    
+    <div id="products"></div>
+    
+    <h2>Sepetim</h2>
+    <div id="cart"></div>
+    <div id="total"></div>
+    
+    <form id="discount-form">
+        <input type="text" id="discount-code" placeholder="İndirim Kodu">
+        <button type="submit">İndirimi Uygula</button>
+    </form>
+    
+    <div id="error"></div>
+    <div id="message"></div>
+
+    <script src="index.js"></script>
+</body>
+</html>
